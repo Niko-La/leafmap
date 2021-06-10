@@ -2,7 +2,7 @@
 
 import os
 import ipyleaflet
-from ipyleaflet import Marker, MarkerCluster, TileLayer, WidgetControl
+from ipyleaflet import Marker, MarkerCluster, TileLayer, WidgetControl, VectorTileLayer
 from .basemaps import basemap_tiles
 from .common import *
 from .legends import builtin_legends
@@ -364,6 +364,34 @@ class Map(ipyleaflet.Map):
             print("Failed to add the specified TileLayer.")
             raise Exception(e)
 
+    def add_vector_tile_layer(
+        self,
+        url="https://tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt?api_key=gCZXZglvRQa6sB2z7JzL1w",
+        attribution="",
+        vector_tile_layer_styles=dict(),
+        **kwargs,
+    ):
+        """Adds a VectorTileLayer to the map.
+
+        Args:
+            url (str, optional): The URL of the tile layer. Defaults to 'https://tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt?api_key=gCZXZglvRQa6sB2z7JzL1w'.
+            name (str, optional): The layer name to use for the layer. Defaults to 'Untitled'.
+            attribution (str, optional): The attribution to use. Defaults to ''.
+            vector_tile_layer_styles(dict,optional): Style dict, specific to the vector tile source.
+        """
+        try:
+            vector_tile_layer = VectorTileLayer(
+                url=url,
+                attribution=attribution,
+                vector_tile_layer_styles=vector_tile_layer_styles,
+                **kwargs,
+            )
+            self.add_layer(vector_tile_layer)
+
+        except Exception as e:
+            print("Failed to add the specified VectorTileLayer.")
+            raise Exception(e)
+    
     def add_osm_from_geocode(
         self,
         query,
@@ -1227,6 +1255,7 @@ class Map(ipyleaflet.Map):
         """
         try:
 
+            outfile = os.path.abspath(outfile)
             if not outfile.endswith(".html"):
                 print("The output file must end with .html")
                 return
